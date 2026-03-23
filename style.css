@@ -65,6 +65,29 @@ body {
   padding: 18px;
 }
 
+.modeMenu {
+  text-align: center;
+}
+
+.modeTitle {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.modeText {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.modeActions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 .imageWrap {
   width: 100%;
   display: grid;
@@ -232,6 +255,35 @@ body {
 
 .nextBtn.secondary {
   background: rgba(255, 255, 255, 0.06);
+}
+
+.learningGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.learningCard {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(17, 26, 46, 0.55);
+  overflow: hidden;
+}
+
+.learningImage {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.learningName {
+  padding: 10px 10px;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
 }
 
 .loading {

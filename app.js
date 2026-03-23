@@ -6,7 +6,15 @@ const $ = (sel) => document.querySelector(sel);
 
 const els = {
   loading: $("#loading"),
+  stats: $("#stats"),
+  modeMenu: $("#modeMenu"),
   quiz: $("#quiz"),
+  learning: $("#learning"),
+  learningGrid: $("#learningGrid"),
+  startGameBtn: $("#startGameBtn"),
+  startLearningBtn: $("#startLearningBtn"),
+  backFromQuizBtn: $("#backFromQuizBtn"),
+  backFromLearningBtn: $("#backFromLearningBtn"),
   score: $("#score"),
   round: $("#round"),
   birdImage: $("#birdImage"),
@@ -22,7 +30,59 @@ const els = {
 
 function showLoading(show) {
   els.loading.classList.toggle("show", show);
-  els.quiz.style.display = show ? "none" : "";
+  if (show) {
+    els.modeMenu.hidden = true;
+    els.quiz.hidden = true;
+    els.learning.hidden = true;
+    els.stats.hidden = true;
+  }
+}
+
+function showModeMenu() {
+  els.modeMenu.hidden = false;
+  els.quiz.hidden = true;
+  els.learning.hidden = true;
+  els.stats.hidden = true;
+}
+
+function showQuizScreen() {
+  els.modeMenu.hidden = true;
+  els.quiz.hidden = false;
+  els.learning.hidden = true;
+  els.stats.hidden = false;
+}
+
+function showLearningScreen() {
+  els.modeMenu.hidden = true;
+  els.quiz.hidden = true;
+  els.learning.hidden = false;
+  els.stats.hidden = true;
+}
+
+function renderLearningGrid(rows) {
+  if (!els.learningGrid) return;
+  els.learningGrid.textContent = "";
+  const frag = document.createDocumentFragment();
+
+  for (const row of rows) {
+    const card = document.createElement("article");
+    card.className = "learningCard";
+
+    const img = document.createElement("img");
+    img.className = "learningImage";
+    img.src = row.imageSrc;
+    img.alt = row.czechName;
+    img.loading = "lazy";
+
+    const name = document.createElement("div");
+    name.className = "learningName";
+    name.textContent = row.czechName;
+
+    card.append(img, name);
+    frag.append(card);
+  }
+
+  els.learningGrid.append(frag);
 }
 
 function normalizeAnswerText(s) {
@@ -245,6 +305,7 @@ function renderQuestion({ roundIndex, totalRounds, correctRow, correctName }) {
 }
 
 let state = null;
+let birdData = null;
 
 function startNewQuiz(birdState) {
   // Enforce the "each concrete picture exactly once per game" rule.
@@ -396,22 +457,38 @@ function restartQuiz() {
   startNewQuiz(state.birdState);
 }
 
+function startGameMode() {
+  if (!birdData) return;
+  showQuizScreen();
+  startNewQuiz(birdData);
+}
+
+function startLearningMode() {
+  if (!birdData) return;
+  showLearningScreen();
+  renderLearningGrid(birdData.rows);
+}
+
 function wireEvents() {
   els.answerForm?.addEventListener("submit", handleAnswerSubmit);
   els.nextBtn.addEventListener("click", nextRound);
   els.restartBtn.addEventListener("click", restartQuiz);
+  els.startGameBtn?.addEventListener("click", startGameMode);
+  els.startLearningBtn?.addEventListener("click", startLearningMode);
+  els.backFromQuizBtn?.addEventListener("click", showModeMenu);
+  els.backFromLearningBtn?.addEventListener("click", showModeMenu);
 }
 
 async function bootstrap() {
   wireEvents();
   showLoading(true);
   try {
-    const birdState = await loadBirdData();
+    birdData = await loadBirdData();
     showLoading(false);
-    startNewQuiz(birdState);
+    showModeMenu();
   } catch (err) {
     showLoading(false);
-    els.quiz.style.display = "";
+    showQuizScreen();
     els.score.textContent = "0";
     els.round.textContent = `0 / ${ROUNDS}`;
     setAnswerControlsDisabled(true);

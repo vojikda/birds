@@ -10,7 +10,7 @@
     <main class="page">
       <header class="header">
         <h1>Bird Quiz for Adam</h1>
-        <div class="stats">
+        <div id="stats" class="stats" hidden>
           <div>
             <div class="label">Score</div>
             <div id="score" class="value">0</div>
@@ -22,7 +22,16 @@
         </div>
       </header>
 
-      <section id="quiz" class="quiz" aria-live="polite">
+      <section id="modeMenu" class="quiz modeMenu" aria-live="polite">
+        <div class="modeTitle">Choose mode</div>
+        <p class="modeText">Pick Game mode for quiz rounds, or Learning mode to study all birds.</p>
+        <div class="modeActions">
+          <button id="startGameBtn" class="nextBtn" type="button">Game mode</button>
+          <button id="startLearningBtn" class="nextBtn secondary" type="button">Learning mode</button>
+        </div>
+      </section>
+
+      <section id="quiz" class="quiz" aria-live="polite" hidden>
         <div class="prompt">
           <div class="imageWrap">
             <img id="birdImage" alt="Bird" class="birdImage" />
@@ -55,12 +64,22 @@
         <div class="controls">
           <button id="nextBtn" class="nextBtn" type="button" disabled>Next</button>
           <button id="restartBtn" class="nextBtn secondary" type="button" hidden>Restart</button>
+          <button id="backFromQuizBtn" class="nextBtn secondary" type="button">Back to modes</button>
         </div>
 
         <section class="birdInfo" aria-live="polite">
           <div class="birdInfoTitle">Bird info</div>
           <div id="birdInfoBox" class="birdInfoBox" hidden></div>
         </section>
+      </section>
+
+      <section id="learning" class="quiz learning" aria-live="polite" hidden>
+        <div class="modeTitle">Learning mode</div>
+        <p class="modeText">Study all bird photos and names.</p>
+        <div id="learningGrid" class="learningGrid"></div>
+        <div class="controls">
+          <button id="backFromLearningBtn" class="nextBtn secondary" type="button">Back to modes</button>
+        </div>
       </section>
 
       <section id="loading" class="loading" aria-live="polite">
@@ -71,7 +90,7 @@
       </section>
     </main>
 
-    <script defer src="./app.js?v=4"></script>
+    <script defer src="./app.js?v=5"></script>
   </body>
 </html>
 
