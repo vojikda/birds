@@ -10,7 +10,9 @@ const els = {
   score: $("#score"),
   round: $("#round"),
   birdImage: $("#birdImage"),
-  optionButtons: Array.from(document.querySelectorAll(".option")),
+  answerForm: $("#answerForm"),
+  answerInput: $("#answerInput"),
+  answerSubmit: $("#answerSubmit"),
   feedbackText: $("#feedbackText"),
   correctReveal: $("#correctReveal"),
   nextBtn: $("#nextBtn"),
@@ -23,16 +25,25 @@ function showLoading(show) {
   els.quiz.style.display = show ? "none" : "";
 }
 
-function setOptionButtonsDisabled(disabled) {
-  els.optionButtons.forEach((b) => {
-    b.disabled = disabled;
-  });
+function normalizeAnswerText(s) {
+  return String(s ?? "")
+    .normalize("NFC")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toLocaleLowerCase("cs");
 }
 
-function clearOptionButtonStyles() {
-  els.optionButtons.forEach((b) => {
-    b.classList.remove("correct", "wrong");
-  });
+function answersMatch(guess, correctName) {
+  return normalizeAnswerText(guess) === normalizeAnswerText(correctName);
+}
+
+function setAnswerControlsDisabled(disabled) {
+  if (els.answerInput) els.answerInput.disabled = disabled;
+  if (els.answerSubmit) els.answerSubmit.disabled = disabled;
+}
+
+function clearAnswerInputStyles() {
+  if (els.answerInput) els.answerInput.classList.remove("correct", "wrong");
 }
 
 function setFeedback({ text, correctRevealText, isFinal = false }) {
@@ -160,10 +171,8 @@ async function loadBirdData() {
     rows.push({ imageSrc, czechName, info });
   }
 
-  if (rows.length < 4) {
-    throw new Error(
-      `Need at least 4 bird rows (to make 4 answer options). Found ${rows.length}.`
-    );
+  if (rows.length < 1) {
+    throw new Error(`Need at least 1 bird row in data. Found ${rows.length}.`);
   }
 
   // Build map of names -> rows (some species may have multiple pictures).
@@ -173,28 +182,10 @@ async function loadBirdData() {
     rowsByName.get(row.czechName).push(row);
   }
 
-  const names = Array.from(rowsByName.keys());
-  if (names.length < 4) {
-    throw new Error(
-      `Need at least 4 distinct bird species names. Found ${names.length}.`
-    );
-  }
-
-  return { rows, rowsByName, names };
+  return { rows, rowsByName };
 }
 
-function pickRandom(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-function pickUniqueRandom(arr, count, { exclude = new Set() } = {}) {
-  const pool = arr.filter((x) => !exclude.has(x));
-  if (pool.length < count) return null;
-  const shuffled = shuffleInPlace(pool.slice());
-  return shuffled.slice(0, count);
-}
-
-function renderQuestion({ roundIndex, totalRounds, correctRow, optionNames, correctName }) {
+function renderQuestion({ roundIndex, totalRounds, correctRow, correctName }) {
   els.round.textContent = `${roundIndex} / ${totalRounds}`;
 
   els.birdImage.alt = correctName;
@@ -205,27 +196,16 @@ function renderQuestion({ roundIndex, totalRounds, correctRow, optionNames, corr
     els.birdImage.alt = `${correctName} (image not found)`;
   };
 
-  const correctText = correctName;
-  const correctIdx = optionNames.findIndex((x) => x === correctText);
-
-  // Shuffle options visually, but preserve which one is correct.
-  const optionModels = optionNames.map((text, idx) => ({
-    text,
-    isCorrect: idx === correctIdx,
-  }));
-  shuffleInPlace(optionModels);
-
-  els.optionButtons.forEach((btn, i) => {
-    btn.textContent = optionModels[i].text;
-    btn.dataset.isCorrect = optionModels[i].isCorrect ? "1" : "0";
-    btn.classList.remove("correct", "wrong");
-  });
+  if (els.answerInput) {
+    els.answerInput.value = "";
+    els.answerInput.classList.remove("correct", "wrong");
+  }
 
   els.nextBtn.disabled = true;
   els.restartBtn.hidden = true;
   els.correctReveal.hidden = true;
-  els.feedbackText.textContent = "Choose the correct bird name.";
-  setOptionButtonsDisabled(false);
+  els.feedbackText.textContent = "Type the Czech name of the bird, then press Answer or Enter.";
+  setAnswerControlsDisabled(false);
 
   // Clear feedback content from any previous question.
   els.correctReveal.textContent = "";
@@ -233,6 +213,10 @@ function renderQuestion({ roundIndex, totalRounds, correctRow, optionNames, corr
   // Clear bird info until the player answers.
   els.birdInfoBox.hidden = true;
   els.birdInfoBox.textContent = "";
+
+  requestAnimationFrame(() => {
+    els.answerInput?.focus();
+  });
 }
 
 let state = null;
@@ -289,54 +273,42 @@ function renderCurrentRound() {
     return;
   }
 
-  const { names } = state.birdState;
-
   // Correct picture comes from unique per-game order.
   const correctName = currentItem.czechName;
   const correctRow = currentItem;
   state.currentCorrectName = correctName;
   state.currentInfo = correctRow.info || "";
 
-  // Wrong options: 3 distinct names different from correctName.
-  const wrongNames = pickUniqueRandom(names, 3, { exclude: new Set([correctName]) });
-  if (!wrongNames) {
-    // Should be prevented by load validation, but keep a safe error.
-    setFeedback({
-      text: "Not enough distinct bird species in data to build options.",
-      correctRevealText: null,
-      isFinal: true,
-    });
-    setOptionButtonsDisabled(true);
-    els.nextBtn.disabled = true;
-    els.restartBtn.hidden = false;
-    return;
-  }
-
-  const optionNames = [correctName, ...wrongNames];
-
   renderQuestion({
     roundIndex,
     totalRounds,
     correctRow,
-    optionNames,
     correctName,
   });
 }
 
-function handleOptionClick(e) {
+function handleAnswerSubmit(e) {
+  e.preventDefault();
   if (!state || state.finished) return;
-  const btn = e.currentTarget;
-  const isCorrect = btn.dataset.isCorrect === "1";
+  if (els.answerInput?.disabled) return;
+
+  const guess = els.answerInput?.value ?? "";
+  if (!normalizeAnswerText(guess)) {
+    els.feedbackText.textContent = "Enter a name, then press Answer.";
+    els.answerInput?.focus();
+    return;
+  }
 
   const correctName = state.currentCorrectName;
-  setOptionButtonsDisabled(true);
-  clearOptionButtonStyles();
+  const isCorrect = answersMatch(guess, correctName);
 
-  // Mark chosen and correct options.
-  els.optionButtons.forEach((b) => {
-    if (b.dataset.isCorrect === "1") b.classList.add("correct");
-    if (b === btn && !isCorrect) b.classList.add("wrong");
-  });
+  setAnswerControlsDisabled(true);
+  clearAnswerInputStyles();
+
+  if (els.answerInput) {
+    if (isCorrect) els.answerInput.classList.add("correct");
+    else els.answerInput.classList.add("wrong");
+  }
 
   if (isCorrect) {
     state.score += SCORE_CORRECT;
@@ -372,6 +344,7 @@ function handleOptionClick(e) {
 function finishQuiz() {
   state.finished = true;
   els.nextBtn.disabled = true;
+  setAnswerControlsDisabled(true);
   els.restartBtn.hidden = false;
 
   setFeedback({
@@ -394,9 +367,7 @@ function restartQuiz() {
 }
 
 function wireEvents() {
-  els.optionButtons.forEach((btn) => {
-    btn.addEventListener("click", handleOptionClick);
-  });
+  els.answerForm?.addEventListener("submit", handleAnswerSubmit);
   els.nextBtn.addEventListener("click", nextRound);
   els.restartBtn.addEventListener("click", restartQuiz);
 }
@@ -413,10 +384,7 @@ async function bootstrap() {
     els.quiz.style.display = "";
     els.score.textContent = "0";
     els.round.textContent = `0 / ${ROUNDS}`;
-    setOptionButtonsDisabled(true);
-    els.optionButtons.forEach((b) => {
-      b.textContent = "";
-    });
+    setAnswerControlsDisabled(true);
     setFeedback({
       text: "Could not start quiz.",
       correctRevealText: err?.message ? String(err.message) : String(err),

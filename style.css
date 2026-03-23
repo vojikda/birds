@@ -80,44 +80,87 @@ body {
   background: rgba(0, 0, 0, 0.18);
 }
 
-.options {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+.answerForm {
   margin-top: 14px;
 }
 
-.option {
+.answerLabel {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  margin-bottom: 8px;
+}
+
+.answerRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+.answerInput {
+  flex: 1 1 200px;
+  min-width: 0;
   appearance: none;
   border: 1px solid var(--border);
   background: var(--panel);
   color: var(--text);
-  padding: 14px 12px;
+  padding: 14px 14px;
   border-radius: 12px;
-  cursor: pointer;
-  font-weight: 650;
+  font-weight: 600;
   font-size: 16px;
-  transition: transform 80ms ease, border-color 120ms ease, background 120ms ease;
+  transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease;
 }
 
-.option:disabled {
+.answerInput::placeholder {
+  color: rgba(232, 238, 252, 0.35);
+}
+
+.answerInput:focus {
+  outline: none;
+  border-color: rgba(92, 200, 255, 0.45);
+  box-shadow: 0 0 0 3px rgba(92, 200, 255, 0.12);
+}
+
+.answerInput:disabled {
   cursor: default;
   opacity: 0.92;
 }
 
-.option:hover:not(:disabled) {
-  transform: translateY(-1px);
-  border-color: rgba(92, 200, 255, 0.35);
-}
-
-.option.correct {
+.answerInput.correct {
   border-color: rgba(53, 208, 127, 0.55);
   background: rgba(53, 208, 127, 0.12);
 }
 
-.option.wrong {
+.answerInput.wrong {
   border-color: rgba(255, 92, 122, 0.55);
   background: rgba(255, 92, 122, 0.12);
+}
+
+.answerSubmit {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: rgba(92, 200, 255, 0.12);
+  color: var(--text);
+  padding: 14px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 750;
+  font-size: 15px;
+  transition: transform 80ms ease, border-color 120ms ease, background 120ms ease;
+  white-space: nowrap;
+}
+
+.answerSubmit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(92, 200, 255, 0.35);
+}
+
+.answerSubmit:disabled {
+  cursor: default;
+  opacity: 0.55;
 }
 
 .feedback {
@@ -225,8 +268,8 @@ body {
 }
 
 @media (max-width: 520px) {
-  .options {
-    grid-template-columns: 1fr;
+  .answerSubmit {
+    flex: 1 1 auto;
   }
 }
 
