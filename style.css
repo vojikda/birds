@@ -88,6 +88,12 @@ body {
   flex-wrap: wrap;
 }
 
+.topBar {
+  display: flex;
+  justify-content: flex-start;
+  margin: -4px 0 14px;
+}
+
 .imageWrap {
   width: 100%;
   display: grid;

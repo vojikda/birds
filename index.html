@@ -32,6 +32,9 @@
       </section>
 
       <section id="quiz" class="quiz" aria-live="polite" hidden>
+        <div class="topBar">
+          <button id="backFromQuizBtn" class="nextBtn secondary" type="button">Back to modes</button>
+        </div>
         <div class="prompt">
           <div class="imageWrap">
             <img id="birdImage" alt="Bird" class="birdImage" />
@@ -64,7 +67,6 @@
         <div class="controls">
           <button id="nextBtn" class="nextBtn" type="button" disabled>Next</button>
           <button id="restartBtn" class="nextBtn secondary" type="button" hidden>Restart</button>
-          <button id="backFromQuizBtn" class="nextBtn secondary" type="button">Back to modes</button>
         </div>
 
         <section class="birdInfo" aria-live="polite">
@@ -74,12 +76,12 @@
       </section>
 
       <section id="learning" class="quiz learning" aria-live="polite" hidden>
+        <div class="topBar">
+          <button id="backFromLearningBtn" class="nextBtn secondary" type="button">Back to modes</button>
+        </div>
         <div class="modeTitle">Learning mode</div>
         <p class="modeText">Study all bird photos and names.</p>
         <div id="learningGrid" class="learningGrid"></div>
-        <div class="controls">
-          <button id="backFromLearningBtn" class="nextBtn secondary" type="button">Back to modes</button>
-        </div>
       </section>
 
       <section id="loading" class="loading" aria-live="polite">
@@ -90,7 +92,7 @@
       </section>
     </main>
 
-    <script defer src="./app.js?v=5"></script>
+    <script defer src="./app.js?v=6"></script>
   </body>
 </html>
 
