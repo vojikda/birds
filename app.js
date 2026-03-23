@@ -35,7 +35,15 @@ function normalizeAnswerText(s) {
     .trim()
     .replace(/\s+/g, " ")
     // Unicode default lowercasing is consistent across engines; avoids locale quirks.
-    .toLowerCase();
+    .toLowerCase()
+    // Typo-tolerant: accented letters treated like plain ASCII for scoring only.
+    .replace(/á/g, "a")
+    .replace(/é/g, "e")
+    .replace(/ě/g, "e")
+    .replace(/í/g, "i")
+    .replace(/ú/g, "u")
+    .replace(/ů/g, "u")
+    .replace(/ý/g, "y");
 }
 
 /**
