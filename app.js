@@ -33,8 +33,20 @@ function normalizeAnswerText(s) {
     .toLocaleLowerCase("cs");
 }
 
-function answersMatch(guess, correctName) {
-  return normalizeAnswerText(guess) === normalizeAnswerText(correctName);
+/**
+ * Full name must match, or for multi-word names (e.g. "Lyska černá") the first
+ * word alone ("Lyska") counts as correct.
+ */
+function evaluateAnswer(guess, correctName) {
+  const g = normalizeAnswerText(guess);
+  const full = normalizeAnswerText(correctName);
+  if (!g) return { correct: false, partial: false };
+  if (g === full) return { correct: true, partial: false };
+  const parts = full.split(" ").filter(Boolean);
+  if (parts.length >= 2 && g === parts[0]) {
+    return { correct: true, partial: true };
+  }
+  return { correct: false, partial: false };
 }
 
 function setAnswerControlsDisabled(disabled) {
@@ -300,7 +312,10 @@ function handleAnswerSubmit(e) {
   }
 
   const correctName = state.currentCorrectName;
-  const isCorrect = answersMatch(guess, correctName);
+  const { correct: isCorrect, partial: isPartialName } = evaluateAnswer(
+    guess,
+    correctName
+  );
 
   setAnswerControlsDisabled(true);
   clearAnswerInputStyles();
@@ -315,7 +330,9 @@ function handleAnswerSubmit(e) {
     els.score.textContent = String(state.score);
     setFeedback({
       text: "Correct!",
-      correctRevealText: null,
+      correctRevealText: isPartialName
+        ? `Full name: ${correctName}`
+        : null,
       isFinal: false,
     });
   } else {
