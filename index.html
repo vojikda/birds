@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bird Quiz for Adam (Czech)</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="header">
+        <h1>Bird Quiz for Adam</h1>
+        <div class="stats">
+          <div>
+            <div class="label">Score</div>
+            <div id="score" class="value">0</div>
+          </div>
+          <div>
+            <div class="label">Round</div>
+            <div id="round" class="value">1 / 15</div>
+          </div>
+        </div>
+      </header>
+
+      <section id="quiz" class="quiz" aria-live="polite">
+        <div class="prompt">
+          <div class="imageWrap">
+            <img id="birdImage" alt="Bird" class="birdImage" />
+          </div>
+        </div>
+
+        <div class="options" role="group" aria-label="Answer options">
+          <button class="option" type="button" data-option-index="0"></button>
+          <button class="option" type="button" data-option-index="1"></button>
+          <button class="option" type="button" data-option-index="2"></button>
+          <button class="option" type="button" data-option-index="3"></button>
+        </div>
+
+        <div class="feedback" aria-live="polite">
+          <div id="feedbackText" class="feedbackText"></div>
+          <div id="correctReveal" class="correctReveal" hidden></div>
+        </div>
+
+        <div class="controls">
+          <button id="nextBtn" class="nextBtn" type="button" disabled>Next</button>
+          <button id="restartBtn" class="nextBtn secondary" type="button" hidden>Restart</button>
+        </div>
+
+        <section class="birdInfo" aria-live="polite">
+          <div class="birdInfoTitle">Bird info</div>
+          <div id="birdInfoBox" class="birdInfoBox" hidden></div>
+        </section>
+      </section>
+
+      <section id="loading" class="loading" aria-live="polite">
+        <div class="loadingCard">
+          <div class="spinner" aria-hidden="true"></div>
+          <div class="loadingText">Loading birds...</div>
+        </div>
+      </section>
+    </main>
+
+    <script defer src="./app.js"></script>
+  </body>
+</html>
+

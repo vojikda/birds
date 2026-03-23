@@ -1,0 +1,232 @@
+:root {
+  --bg: #0b1220;
+  --panel: #111a2e;
+  --text: #e8eefc;
+  --muted: #aab6dd;
+  --accent: #5cc8ff;
+  --good: #35d07f;
+  --bad: #ff5c7a;
+  --border: rgba(255, 255, 255, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica,
+    Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: radial-gradient(1200px 600px at 20% 0%, #14224a 0%, var(--bg) 60%);
+  color: var(--text);
+}
+
+.page {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: 0.2px;
+}
+
+.stats {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.stats .label {
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.stats .value {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.quiz {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.imageWrap {
+  width: 100%;
+  display: grid;
+  place-items: center;
+  padding: 10px 0 6px;
+}
+
+.birdImage {
+  width: min(540px, 100%);
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.option {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  padding: 14px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 650;
+  font-size: 16px;
+  transition: transform 80ms ease, border-color 120ms ease, background 120ms ease;
+}
+
+.option:disabled {
+  cursor: default;
+  opacity: 0.92;
+}
+
+.option:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(92, 200, 255, 0.35);
+}
+
+.option.correct {
+  border-color: rgba(53, 208, 127, 0.55);
+  background: rgba(53, 208, 127, 0.12);
+}
+
+.option.wrong {
+  border-color: rgba(255, 92, 122, 0.55);
+  background: rgba(255, 92, 122, 0.12);
+}
+
+.feedback {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.feedbackText {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.correctReveal {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.birdInfo {
+  margin-top: 14px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+.birdInfoTitle {
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 8px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+}
+
+.birdInfoBox {
+  border: 1px solid var(--border);
+  background: rgba(17, 26, 46, 0.55);
+  border-radius: 12px;
+  padding: 14px 14px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+.nextBtn {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: rgba(92, 200, 255, 0.12);
+  color: var(--text);
+  padding: 10px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 750;
+  font-size: 15px;
+}
+
+.nextBtn:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.nextBtn.secondary {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.loading {
+  display: none;
+  margin-top: 18px;
+}
+
+.loading.show {
+  display: block;
+}
+
+.loadingCard {
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  display: grid;
+  place-items: center;
+  gap: 10px;
+}
+
+.spinner {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.18);
+  border-top-color: var(--accent);
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 520px) {
+  .options {
+    grid-template-columns: 1fr;
+  }
+}
+
