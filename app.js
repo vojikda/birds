@@ -68,25 +68,11 @@ function buildRankSummary({ score, correctCount }) {
       : Math.round((Number(score) + 15) / 2);
   const idx = getRankIndexForCorrect(inferredCorrect);
   const current = RANKS[idx];
-  const below = idx > 0 ? RANKS[idx - 1] : null;
-  const above = idx < RANKS.length - 1 ? RANKS[idx + 1] : null;
-
-  let neighborText = "";
-  if (below && above) {
-    neighborText = `Jsi lepší než „${below.title}“, ale můžeš být ještě lepší a dosáhnout na „${above.title}“.`;
-  } else if (!below && above) {
-    neighborText = `Můžeš se zlepšit a dostat se na „${above.title}“.`;
-  } else if (below && !above) {
-    neighborText = `Jsi na vrcholu žebříčku! Za tebou zůstává „${below.title}“.`;
-  } else {
-    neighborText = "Jsi na vrcholu žebříčku!";
-  }
 
   return {
     title: current.title,
     stars: current.stars,
     blurb: current.blurb,
-    neighborText,
   };
 }
 
@@ -553,12 +539,7 @@ function finishQuiz() {
   const blurb = document.createElement("div");
   blurb.className = "rankBlurb";
   blurb.textContent = rank.blurb;
-
-  const neighbor = document.createElement("div");
-  neighbor.className = "rankNeighbor";
-  neighbor.textContent = rank.neighborText;
-
-  els.correctReveal.append(rankTitle, rankStars, blurb, neighbor);
+  els.correctReveal.append(rankTitle, rankStars, blurb);
 }
 
 function nextRound() {
