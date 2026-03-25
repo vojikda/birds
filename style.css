@@ -211,6 +211,42 @@ body {
   white-space: pre-wrap;
 }
 
+.rankTitle {
+  font-size: 26px;
+  font-weight: 900;
+  color: #f5c84c;
+  text-align: center;
+  margin-top: 2px;
+  margin-bottom: 4px;
+}
+
+.rankStars {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.rankStar {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.rankStar.gold {
+  color: #f5c84c;
+  text-shadow: 0 0 10px rgba(245, 200, 76, 0.18);
+}
+
+.rankStar.gray {
+  color: rgba(170, 182, 221, 0.35);
+}
+
+.rankBlurb,
+.rankNeighbor {
+  margin-top: 6px;
+  line-height: 1.45;
+}
+
 .controls {
   display: flex;
   gap: 10px;

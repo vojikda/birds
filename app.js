@@ -9,37 +9,44 @@ const RANKS = [
     // For 15 rounds and scoring +1/-1, the number of correct answers is:
     // correct = (score + 15) / 2
     minCorrect: 0,
+    stars: 1,
     title: "Začátečník",
     blurb: "Neva — každý nějak začíná. Zkus si nejdřív projít režim učení.",
   },
   {
     minCorrect: 4,
+    stars: 2,
     title: "Mírně pokročilý",
     blurb: "Základy už jsou vidět. Teď přidat pár správných názvů navíc.",
   },
   {
     minCorrect: 6,
+    stars: 3,
     title: "Pokročilý",
     blurb: "Solidní výkon. Poznávačka ti začíná jít.",
   },
   {
     minCorrect: 9,
+    stars: 4,
     title: "Expert",
     blurb: "Daří se! Máš dobrý přehled a rychle se zlepšuješ.",
   },
   {
     minCorrect: 11,
+    stars: 5,
     title: "Mistr",
     blurb: "Paráda. Stabilně vysoká úspěšnost.",
   },
   {
     minCorrect: 13,
+    stars: 6,
     title: "Velmistr",
     blurb: "Skoro bez chyby! Jen kousek k absolutní špičce.",
   },
   {
     // “14–15” správných odpovědí = top výkon.
     minCorrect: 14,
+    stars: 7,
     title: "Ptačí bůh",
     blurb: "Legenda! Tohle už je ptačí vševědoucnost.",
   },
@@ -77,6 +84,7 @@ function buildRankSummary({ score, correctCount }) {
 
   return {
     title: current.title,
+    stars: current.stars,
     blurb: current.blurb,
     neighborText,
   };
@@ -519,11 +527,38 @@ function finishQuiz() {
     score: state.score,
     correctCount: state.correctCount,
   });
-  setFeedback({
-    text: `Konec! Skóre: ${state.score}. Hodnost: ${rank.title}.`,
-    correctRevealText: `${rank.blurb}\n${rank.neighborText}`,
-    isFinal: true,
-  });
+
+  els.feedbackText.textContent = `Konec! Skóre: ${state.score}.`;
+
+  // Rich “rank” UI: big golden title + 1..7 stars.
+  els.correctReveal.hidden = false;
+  els.correctReveal.textContent = "";
+
+  const rankTitle = document.createElement("div");
+  rankTitle.className = "rankTitle";
+  rankTitle.textContent = rank.title;
+
+  const rankStars = document.createElement("div");
+  rankStars.className = "rankStars";
+
+  const STAR_CHAR = "★";
+  const totalStars = 7;
+  for (let i = 1; i <= totalStars; i++) {
+    const star = document.createElement("span");
+    star.className = `rankStar ${i <= rank.stars ? "gold" : "gray"}`;
+    star.textContent = STAR_CHAR;
+    rankStars.append(star);
+  }
+
+  const blurb = document.createElement("div");
+  blurb.className = "rankBlurb";
+  blurb.textContent = rank.blurb;
+
+  const neighbor = document.createElement("div");
+  neighbor.className = "rankNeighbor";
+  neighbor.textContent = rank.neighborText;
+
+  els.correctReveal.append(rankTitle, rankStars, blurb, neighbor);
 }
 
 function nextRound() {
